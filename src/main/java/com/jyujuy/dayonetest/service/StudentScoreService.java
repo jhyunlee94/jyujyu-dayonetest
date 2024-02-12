@@ -51,7 +51,7 @@ public class StudentScoreService {
             StudentFail studentFail = StudentFail.builder()
                     .exam(exam)
                     .studentName(studentName)
-                    .avgScroe(avgScore)
+                    .avgScore(avgScore)
                     .build();
 
             studentFailRepository.save(studentFail);
@@ -72,7 +72,7 @@ public class StudentScoreService {
 
         return studentFails.stream()
                 .filter((fail) -> fail.getExam().equals(exam))
-                .map((fail) -> new ExamFailStudentResponse(fail.getStudentName(), fail.getAvgScroe()))
+                .map((fail) -> new ExamFailStudentResponse(fail.getStudentName(), fail.getAvgScore()))
                 .toList();
     }
 

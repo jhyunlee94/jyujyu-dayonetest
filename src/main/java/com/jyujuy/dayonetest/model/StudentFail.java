@@ -25,5 +25,5 @@ public class StudentFail {
     private String studentName;
 
     @Column(name = "avg_score")
-    private Double avgScroe;
+    private Double avgScore;
 }
