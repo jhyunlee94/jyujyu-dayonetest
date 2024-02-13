@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @AllArgsConstructor
+
+
+
+
+
 @NoArgsConstructor
 @Table(name = "student_fail")
 @Entity
