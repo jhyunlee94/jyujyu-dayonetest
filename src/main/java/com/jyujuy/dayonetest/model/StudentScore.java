@@ -3,12 +3,14 @@ package com.jyujuy.dayonetest.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "student_score")
+@Getter
 @Entity
 public class StudentScore {
 
