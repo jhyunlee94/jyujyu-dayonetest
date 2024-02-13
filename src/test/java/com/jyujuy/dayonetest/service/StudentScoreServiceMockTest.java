@@ -6,6 +6,7 @@ import com.jyujuy.dayonetest.controller.response.ExamPassStudentResponse;
 import com.jyujuy.dayonetest.model.StudentFail;
 import com.jyujuy.dayonetest.model.StudentPass;
 import com.jyujuy.dayonetest.model.StudentScore;
+import com.jyujuy.dayonetest.model.StudentScoreTestDataBuilder;
 import com.jyujuy.dayonetest.repository.StudentFailRepository;
 import com.jyujuy.dayonetest.repository.StudentPassRepository;
 import com.jyujuy.dayonetest.repository.StudentScoreRepository;
@@ -51,30 +52,19 @@ public class StudentScoreServiceMockTest {
     @DisplayName("성적 저장 로직 검증 / 60점 이상인 경우")
     public void saveScoreMockTest() {
         // given : 평균점수가 60점 이상인 경우
-
-
-        String givenStudentName = "jyujyu";
-        String givenExam = "testexam";
-        Integer givenKorScore = 80;
-        Integer givenEnglishScore = 100;
-        Integer givenMathScore = 60;
-        // StudentScore.class 에 대한 ArgumentCaptor 를 만들어주는겁니다.
-        StudentScore expectStudentScore = StudentScore.builder()
-                .studentName(givenStudentName)
-                .exam(givenExam)
-                .korScore(givenKorScore)
-                .englishScore(givenEnglishScore)
-                .mathScore(givenMathScore)
+        StudentScore expectStudentScore = StudentScoreTestDataBuilder.passed()
+                // builder 패턴의 특징은 이렇게 오버라이딩이 가능합니다.
+                .studentName("Change StudentName")
                 .build();
 
         StudentPass expectStudentPass = StudentPass.builder()
-                .studentName(givenStudentName)
-                .exam(givenExam)
+                .studentName(expectStudentScore.getStudentName())
+                .exam(expectStudentScore.getExam())
                 .avgScore(
                         (new MyCalculator(0.0))
-                                .add(givenKorScore.doubleValue())
-                                .add(givenEnglishScore.doubleValue())
-                                .add(givenMathScore.doubleValue())
+                                .add(expectStudentScore.getKorScore().doubleValue())
+                                .add(expectStudentScore.getEnglishScore().doubleValue())
+                                .add(expectStudentScore.getMathScore().doubleValue())
                                 .divide(3.0)
                                 .getResult()
                 )
@@ -85,7 +75,13 @@ public class StudentScoreServiceMockTest {
 
 
         // when
-        studentScoreService.saveScore(givenStudentName, givenExam, givenKorScore, givenEnglishScore, givenMathScore);
+        studentScoreService.saveScore(
+                expectStudentScore.getStudentName(),
+                expectStudentPass.getExam(),
+                expectStudentScore.getKorScore(),
+                expectStudentScore.getEnglishScore(),
+                expectStudentScore.getMathScore()
+        );
 
         // then
 //        Mockito.verify(studentScoreRepository, Mockito.times(1)).save(Mockito.any());
