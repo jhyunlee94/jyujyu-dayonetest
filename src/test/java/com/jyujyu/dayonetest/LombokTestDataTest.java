@@ -1,18 +1,18 @@
 package com.jyujyu.dayonetest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class LombokTestDataTest {
 
-    @Test
-    public void testDataTest(){
-        TestData testData = new TestData();
-        testData.setName("jyujyu");
+  @Test
+  public void testDataTest() {
+    TestData testData = new TestData();
+    testData.setName("jyujyu");
 
-        Assertions.assertEquals("jyujyu", testData.getName());
-        assertThat("jyujyu").isEqualTo(testData.getName());
-    }
+    Assertions.assertEquals("jyujyu", testData.getName());
+    assertThat("jyujyu").isEqualTo(testData.getName());
+  }
 }
