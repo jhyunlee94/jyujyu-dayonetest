@@ -1,5 +1,6 @@
 package com.jyujuy.dayonetest;
 
+import com.redis.testcontainers.RedisContainer;
 import org.junit.Ignore;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -22,10 +23,14 @@ import java.util.Map;
 public class IntegrationTest {
 
     static DockerComposeContainer rdbms;
+    static RedisContainer redis;
 
     static {
         rdbms = new DockerComposeContainer(new File("infra/test/docker-compose.yaml")).withExposedService("local-db", 3306, Wait.forLogMessage(".*ready for connections.*", 1).withStartupTimeout(Duration.ofSeconds(300))).withExposedService("local-db-migrate", 0, Wait.forLogMessage("(.*Successfully applied.*)|(.*Successfully validated.*)", 1).withStartupTimeout(Duration.ofSeconds(300)));
         rdbms.start();
+        redis = new RedisContainer(RedisContainer.DEFAULT_IMAGE_NAME.withTag("6"));
+        redis.start();
+
     }
 
     static class IntegrationTestInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -38,6 +43,11 @@ public class IntegrationTest {
 
             properties.put("spring.datasource.url", "jdbc:mysql://" + rdbmsHost + ":" + rdbmsPort + "/score");
 
+            var redisHost = redis.getHost();
+            var redisPort = redis.getFirstMappedPort();
+
+            properties.put("spring.data.redis.host", redisHost);
+            properties.put("spring.data.redis.port", redisPort.toString());
             TestPropertyValues.of(properties)
                     .applyTo(applicationContext);
         }
