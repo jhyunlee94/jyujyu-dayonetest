@@ -3,10 +3,7 @@ package com.jyujuy.dayonetest.service;
 import com.jyujuy.dayonetest.MyCalculator;
 import com.jyujuy.dayonetest.controller.response.ExamFailStudentResponse;
 import com.jyujuy.dayonetest.controller.response.ExamPassStudentResponse;
-import com.jyujuy.dayonetest.model.StudentFail;
-import com.jyujuy.dayonetest.model.StudentPass;
-import com.jyujuy.dayonetest.model.StudentScore;
-import com.jyujuy.dayonetest.model.StudentScoreTestDataBuilder;
+import com.jyujuy.dayonetest.model.*;
 import com.jyujuy.dayonetest.repository.StudentFailRepository;
 import com.jyujuy.dayonetest.repository.StudentPassRepository;
 import com.jyujuy.dayonetest.repository.StudentScoreRepository;
@@ -21,7 +18,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class StudentScoreServiceMockTest {
-    private  StudentScoreService studentScoreService;
+    private StudentScoreService studentScoreService;
     private StudentScoreRepository studentScoreRepository = Mockito.mock(StudentScoreRepository.class);
     private StudentPassRepository studentPassRepository = Mockito.mock(StudentPassRepository.class);
     private StudentFailRepository studentFailRepository = Mockito.mock(StudentFailRepository.class);
@@ -31,12 +28,9 @@ public class StudentScoreServiceMockTest {
         studentScoreRepository = Mockito.mock(StudentScoreRepository.class);
         studentPassRepository = Mockito.mock(StudentPassRepository.class);
         studentFailRepository = Mockito.mock(StudentFailRepository.class);
-        studentScoreService = new StudentScoreService(
-                studentScoreRepository,
-                studentPassRepository,
-                studentFailRepository
-        );
+        studentScoreService = new StudentScoreService(studentScoreRepository, studentPassRepository, studentFailRepository);
     }
+
     @Test
     public void firstSaveScroeMockTest() {
         String givenStudentName = "jyujyu";
@@ -54,34 +48,16 @@ public class StudentScoreServiceMockTest {
         // given : 평균점수가 60점 이상인 경우
         StudentScore expectStudentScore = StudentScoreTestDataBuilder.passed()
                 // builder 패턴의 특징은 이렇게 오버라이딩이 가능합니다.
-                .studentName("Change StudentName")
                 .build();
 
-        StudentPass expectStudentPass = StudentPass.builder()
-                .studentName(expectStudentScore.getStudentName())
-                .exam(expectStudentScore.getExam())
-                .avgScore(
-                        (new MyCalculator(0.0))
-                                .add(expectStudentScore.getKorScore().doubleValue())
-                                .add(expectStudentScore.getEnglishScore().doubleValue())
-                                .add(expectStudentScore.getMathScore().doubleValue())
-                                .divide(3.0)
-                                .getResult()
-                )
-                .build();
+        StudentPass expectStudentPass = StudentPass.builder().studentName(expectStudentScore.getStudentName()).exam(expectStudentScore.getExam()).avgScore((new MyCalculator(0.0)).add(expectStudentScore.getKorScore().doubleValue()).add(expectStudentScore.getEnglishScore().doubleValue()).add(expectStudentScore.getMathScore().doubleValue()).divide(3.0).getResult()).build();
         ArgumentCaptor<StudentScore> studentScoreArgumentCaptor = ArgumentCaptor.forClass(StudentScore.class);
         ArgumentCaptor<StudentPass> studentPassArgumentCaptor = ArgumentCaptor.forClass(StudentPass.class);
 //        ArgumentCaptor<StudentFail> studentFailArgumentCaptor = ArgumentCaptor.forClass(StudentFail.class);
 
 
         // when
-        studentScoreService.saveScore(
-                expectStudentScore.getStudentName(),
-                expectStudentPass.getExam(),
-                expectStudentScore.getKorScore(),
-                expectStudentScore.getEnglishScore(),
-                expectStudentScore.getMathScore()
-        );
+        studentScoreService.saveScore(expectStudentScore.getStudentName(), expectStudentPass.getExam(), expectStudentScore.getKorScore(), expectStudentScore.getEnglishScore(), expectStudentScore.getMathScore());
 
         // then
 //        Mockito.verify(studentScoreRepository, Mockito.times(1)).save(Mockito.any());
@@ -90,7 +66,7 @@ public class StudentScoreServiceMockTest {
 
         Mockito.verify(studentScoreRepository, Mockito.times(1)).save(studentScoreArgumentCaptor.capture());
         StudentScore capturedStudentScore = studentScoreArgumentCaptor.getValue();
-        Assertions.assertEquals(expectStudentScore.getStudentName(),capturedStudentScore.getStudentName());
+        Assertions.assertEquals(expectStudentScore.getStudentName(), capturedStudentScore.getStudentName());
         Assertions.assertEquals(expectStudentScore.getExam(), capturedStudentScore.getExam());
         Assertions.assertEquals(expectStudentScore.getKorScore(), capturedStudentScore.getKorScore());
         Assertions.assertEquals(expectStudentScore.getEnglishScore(), capturedStudentScore.getEnglishScore());
@@ -99,7 +75,7 @@ public class StudentScoreServiceMockTest {
 
         Mockito.verify(studentPassRepository, Mockito.times(1)).save(studentPassArgumentCaptor.capture());
         StudentPass capturedStudentPass = studentPassArgumentCaptor.getValue();
-        Assertions.assertEquals(expectStudentPass.getStudentName(),capturedStudentPass.getStudentName());
+        Assertions.assertEquals(expectStudentPass.getStudentName(), capturedStudentPass.getStudentName());
         Assertions.assertEquals(expectStudentPass.getExam(), capturedStudentPass.getExam());
         Assertions.assertEquals(expectStudentPass.getAvgScore(), capturedStudentPass.getAvgScore());
 
@@ -111,39 +87,16 @@ public class StudentScoreServiceMockTest {
     public void saveScoreMockTest2() {
         // given : 평균점수가 60점 미만인 경우
 
-        String givenStudentName = "jyujyu";
-        String givenExam = "testexam";
-        Integer givenKorScore = 40;
-        Integer givenEnglishScore = 40;
-        Integer givenMathScore = 60;
-
         // StudentScore.class 에 대한 ArgumentCaptor 를 만들어주는겁니다.
-        StudentScore expectStudentScore = StudentScore.builder()
-                .studentName(givenStudentName)
-                .exam(givenExam)
-                .korScore(givenKorScore)
-                .englishScore(givenEnglishScore)
-                .mathScore(givenMathScore)
-                .build();
+        StudentScore expectStudentScore = StudentScoreFixture.failed();
 
-        StudentFail expectStudentFail = StudentFail.builder()
-                        .studentName(givenStudentName)
-                        .exam(givenExam)
-                .avgScore(
-                        (new MyCalculator(0.0))
-                                .add(givenKorScore.doubleValue())
-                                .add(givenEnglishScore.doubleValue())
-                                .add(givenMathScore.doubleValue())
-                                .divide(3.0)
-                                .getResult()
-                        )
-                        .build();
+        StudentFail expectStudentFail = StudentFail.builder().studentName(expectStudentScore.getStudentName()).exam(expectStudentScore.getExam()).avgScore((new MyCalculator(0.0)).add(expectStudentScore.getKorScore().doubleValue()).add(expectStudentScore.getEnglishScore().doubleValue()).add(expectStudentScore.getMathScore().doubleValue()).divide(3.0).getResult()).build();
 
         ArgumentCaptor<StudentScore> studentScoreArgumentCaptor = ArgumentCaptor.forClass(StudentScore.class);
         ArgumentCaptor<StudentFail> studentFailArgumentCaptor = ArgumentCaptor.forClass(StudentFail.class);
 //        ArgumentCaptor<StudentFail> studentFailArgumentCaptor = ArgumentCaptor.forClass(StudentFail.class);
         // when
-        studentScoreService.saveScore(givenStudentName, givenExam, givenKorScore, givenEnglishScore, givenMathScore);
+        studentScoreService.saveScore(expectStudentScore.getStudentName(), expectStudentScore.getExam(), expectStudentScore.getKorScore(), expectStudentScore.getEnglishScore(), expectStudentScore.getMathScore());
 
         // then
 //        Mockito.verify(studentScoreRepository, Mockito.times(1)).save(Mockito.any());
@@ -151,7 +104,7 @@ public class StudentScoreServiceMockTest {
 //        Mockito.verify(studentFailRepository, Mockito.times(1)).save(Mockito.any());
         Mockito.verify(studentScoreRepository, Mockito.times(1)).save(studentScoreArgumentCaptor.capture());
         StudentScore capturedStudentScore = studentScoreArgumentCaptor.getValue();
-        Assertions.assertEquals(expectStudentScore.getStudentName(),capturedStudentScore.getStudentName());
+        Assertions.assertEquals(expectStudentScore.getStudentName(), capturedStudentScore.getStudentName());
         Assertions.assertEquals(expectStudentScore.getExam(), capturedStudentScore.getExam());
         Assertions.assertEquals(expectStudentScore.getKorScore(), capturedStudentScore.getKorScore());
         Assertions.assertEquals(expectStudentScore.getEnglishScore(), capturedStudentScore.getEnglishScore());
@@ -221,9 +174,7 @@ public class StudentScoreServiceMockTest {
         StudentScoreService service = new StudentScoreService(studentScoreRepository, studentPassRepository, studentFailRepository);
 
         // when
-        var expectFailList = List.of(expectStudent1, expectStudent2).stream().map(
-                (fail) -> new ExamFailStudentResponse(fail.getStudentName(), fail.getAvgScore())
-        ).toList();
+        var expectFailList = List.of(expectStudent1, expectStudent2).stream().map((fail) -> new ExamFailStudentResponse(fail.getStudentName(), fail.getAvgScore())).toList();
         List<ExamFailStudentResponse> responses = service.getFailStudentsList(givenTestExam);
 
         Assertions.assertIterableEquals(expectFailList, responses);
