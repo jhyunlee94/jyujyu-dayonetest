@@ -1,12 +1,21 @@
 #!/bin/sh
 
+# 시작 메시지 출력
+echo "Pre-commit Hook 시작"
+
+# 스테이징된 파일 목록 가져오기
 targetFiles=$(git diff --staged --name-only)
 
+# Spotless 적용
 echo "Apply Spotless.."
 ./gradlew spotlessApply
 
+# 변경된 파일 스테이징
 for file in $targetFiles; do
   if test -f "$file"; then
     git add $file
   fi
 done
+
+# 끝 메시지 출력
+echo "Pre-commit Hook 종료"
