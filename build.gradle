@@ -132,7 +132,7 @@ spotless {
     }
 }
 
-tasks.register("addGitPreCommitHook", Copy) {
+tasks.register('addGitPrecommitHook', Copy) {
     from 'script/pre-commit'
     into '.git/hooks'
 }

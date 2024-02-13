@@ -3,7 +3,6 @@
 targetFiles=$(git diff --staged --name-only)
 
 echo "Apply Spotless.."
-cd /Users/jhyun/Desktop/Java/dayonetest/
 ./gradlew spotlessApply
 
 for file in $targetFiles; do
