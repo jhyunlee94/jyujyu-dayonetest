@@ -48,9 +48,11 @@ public class StudentScoreServiceMockTest {
         // given : 평균점수가 60점 이상인 경우
         StudentScore expectStudentScore = StudentScoreTestDataBuilder.passed()
                 // builder 패턴의 특징은 이렇게 오버라이딩이 가능합니다.
+                .studentName("Student New Name")
                 .build();
 
-        StudentPass expectStudentPass = StudentPass.builder().studentName(expectStudentScore.getStudentName()).exam(expectStudentScore.getExam()).avgScore((new MyCalculator(0.0)).add(expectStudentScore.getKorScore().doubleValue()).add(expectStudentScore.getEnglishScore().doubleValue()).add(expectStudentScore.getMathScore().doubleValue()).divide(3.0).getResult()).build();
+//        StudentPass expectStudentPass = StudentPass.builder().studentName(expectStudentScore.getStudentName()).exam(expectStudentScore.getExam()).avgScore((new MyCalculator(0.0)).add(expectStudentScore.getKorScore().doubleValue()).add(expectStudentScore.getEnglishScore().doubleValue()).add(expectStudentScore.getMathScore().doubleValue()).divide(3.0).getResult()).build();
+        StudentPass expectStudentPass = StudentPassFixture.create(expectStudentScore);
         ArgumentCaptor<StudentScore> studentScoreArgumentCaptor = ArgumentCaptor.forClass(StudentScore.class);
         ArgumentCaptor<StudentPass> studentPassArgumentCaptor = ArgumentCaptor.forClass(StudentPass.class);
 //        ArgumentCaptor<StudentFail> studentFailArgumentCaptor = ArgumentCaptor.forClass(StudentFail.class);
@@ -90,8 +92,9 @@ public class StudentScoreServiceMockTest {
         // StudentScore.class 에 대한 ArgumentCaptor 를 만들어주는겁니다.
         StudentScore expectStudentScore = StudentScoreFixture.failed();
 
-        StudentFail expectStudentFail = StudentFail.builder().studentName(expectStudentScore.getStudentName()).exam(expectStudentScore.getExam()).avgScore((new MyCalculator(0.0)).add(expectStudentScore.getKorScore().doubleValue()).add(expectStudentScore.getEnglishScore().doubleValue()).add(expectStudentScore.getMathScore().doubleValue()).divide(3.0).getResult()).build();
+//        StudentFail expectStudentFail = StudentFail.builder().studentName(expectStudentScore.getStudentName()).exam(expectStudentScore.getExam()).avgScore((new MyCalculator(0.0)).add(expectStudentScore.getKorScore().doubleValue()).add(expectStudentScore.getEnglishScore().doubleValue()).add(expectStudentScore.getMathScore().doubleValue()).divide(3.0).getResult()).build();
 
+        StudentFail expectStudentFail = StudentFailFixture.create(expectStudentScore);
         ArgumentCaptor<StudentScore> studentScoreArgumentCaptor = ArgumentCaptor.forClass(StudentScore.class);
         ArgumentCaptor<StudentFail> studentFailArgumentCaptor = ArgumentCaptor.forClass(StudentFail.class);
 //        ArgumentCaptor<StudentFail> studentFailArgumentCaptor = ArgumentCaptor.forClass(StudentFail.class);
@@ -126,9 +129,12 @@ public class StudentScoreServiceMockTest {
         // 먼저 우리는 givenTestExam = "testexam" 인것만 가져오는지
         // 코드 상에서 filter 가 잘 걸리는지 확인해 볼겁니다.
 
-        StudentPass expectStudent1 = StudentPass.builder().id(1L).studentName("jyujyu").exam("testexam").avgScore(70.0).build();
-        StudentPass expectStudent2 = StudentPass.builder().id(2L).studentName("test").exam("testexam").avgScore(80.0).build();
-        StudentPass notExpectStudent3 = StudentPass.builder().id(3L).studentName("iamnot").exam("secondExam").avgScore(90.0).build();
+//        StudentPass expectStudent1 = StudentPass.builder().id(1L).studentName("jyujyu").exam("testexam").avgScore(70.0).build();
+        StudentPass expectStudent1 = StudentPassFixture.create("jyujyu", "testexam");
+//        StudentPass expectStudent2 = StudentPass.builder().id(2L).studentName("test").exam("testexam").avgScore(80.0).build();
+        StudentPass expectStudent2 = StudentPassFixture.create("test", "testexam");
+//        StudentPass notExpectStudent3 = StudentPass.builder().id(3L).studentName("iamnot").exam("secondExam").avgScore(90.0).build();
+        StudentPass notExpectStudent3 = StudentPassFixture.create("anotherStudent", "secondExam");
 //        Mockito.when(studentPassRepository.findAll()).thenReturn(List.of(
 //                StudentPass.builder().id(1L).studentName("jyujyu").exam("testexam").avgScore(70.0).build(),
 //                StudentPass.builder().id(2L).studentName("test").exam("testexam").avgScore(80.0).build(),
@@ -166,9 +172,12 @@ public class StudentScoreServiceMockTest {
 
         String givenTestExam = "testexam";
 
-        StudentFail notExpectStudent3 = StudentFail.builder().id(1L).studentName("jyujyu").exam("secondExam").avgScore(70.0).build();
-        StudentFail expectStudent1 = StudentFail.builder().id(2L).studentName("test").exam(givenTestExam).avgScore(80.0).build();
-        StudentFail expectStudent2 = StudentFail.builder().id(3L).studentName("iamnot").exam(givenTestExam).avgScore(90.0).build();
+//        StudentFail notExpectStudent3 = StudentFail.builder().id(1L).studentName("jyujyu").exam("secondExam").avgScore(70.0).build();
+//        StudentFail expectStudent1 = StudentFail.builder().id(2L).studentName("test").exam(givenTestExam).avgScore(80.0).build();
+//        StudentFail expectStudent2 = StudentFail.builder().id(3L).studentName("iamnot").exam(givenTestExam).avgScore(90.0).build();
+        StudentFail notExpectStudent3 = StudentFailFixture.create("jyujyu", "anotherExam");
+        StudentFail expectStudent1 = StudentFailFixture.create("testName", givenTestExam);
+        StudentFail expectStudent2 = StudentFailFixture.create("testName 2", givenTestExam);
 
         Mockito.when(studentFailRepository.findAll()).thenReturn(List.of(expectStudent1, expectStudent2, notExpectStudent3));
         StudentScoreService service = new StudentScoreService(studentScoreRepository, studentPassRepository, studentFailRepository);
