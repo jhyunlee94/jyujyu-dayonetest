@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'jacoco'
+    id 'org.sonarqube' version '4.0.0.2929'
 }
 
 group = 'com.jyujyu.dayonetest'
@@ -103,5 +104,18 @@ tasks.jacocoTestCoverageVerification {
                     "com.jyujyu.dayonetest.DayonetestApplication",
             )
         }
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.host.url", "http://localhost:9000")
+        property("sonar.login", "sqp_79cf06d80daf0e6a803bed97897c1935fe90b666")
+        property("sonar.sources", "src/main/java")
+        property("sonar.tests", "src/test/java")
+        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.projectKey", "dayonetest")
+        property("sonar.projectName", "dayonetest")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/jacoco/jacoco.xml")
     }
 }
