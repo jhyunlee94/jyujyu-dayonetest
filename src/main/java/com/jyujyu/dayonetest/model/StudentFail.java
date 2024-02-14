@@ -3,7 +3,6 @@ package com.jyujyu.dayonetest.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +14,9 @@ import lombok.NoArgsConstructor;
 @Entity
 public class StudentFail {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "student_fail_id")
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "student_fail_id")
   private Long id;
 
   @Column(name = "exam")
